@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.1...3.15)
+project(STL)
+
+# add_executable(main 1static_template_member.cpp)
+# add_executable(main 2partial_specialization.cpp)
+# add_executable(main 3function_tmpl_partial.cpp)
+# add_executable(main 4member_tmpl.cpp)
+# add_executable(main 5limited_default_tmpl.cpp)
+# add_executable(main 6nontype_tmpl_param.cpp)
+# add_executable(main 7unnamed_obj.cpp)
+add_executable(main 8incre_decre_deref.cpp)

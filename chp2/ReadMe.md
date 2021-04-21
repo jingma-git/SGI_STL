@@ -9,3 +9,9 @@
 construct() for construct object's content in allocated space
 destroy() for destroy object's content
 ```
+
+```
+uninitiallized_copy(InputIterator first, InputIterator last, ForwardIterator result)
+uninitiallized_fill_n()
+uninitiallized_fill()
+```

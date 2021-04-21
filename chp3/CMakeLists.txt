@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.1)
+project(chp3)
+
+# add_executable(main 1auto_ptr.cpp)
+# add_executable(main 2my_list.cpp)
+add_executable(main 3traits.cpp)

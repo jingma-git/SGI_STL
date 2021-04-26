@@ -93,15 +93,7 @@ namespace mj
         list() { empty_initialize(); }
         ~list()
         {
-            _Node *cur = node->next;
-            while (cur != node)
-            {
-                _Node *next = cur->next;
-                // _Node_alloc::destroy(cur);
-                // _Node_alloc::deallocate(cur);
-                delete cur;
-                cur = next;
-            }
+            clear();
         }
 
     protected:
@@ -115,8 +107,8 @@ namespace mj
         _Node *get_node()
         {
             // _Node *newnode = new _Node;
-            // return _Node_alloc::allocate(1);
-            return (new _Node);
+            return _Node_alloc::allocate(1);
+            // return (new _Node);
         }
 
         _Node *create_node(const T &value)
@@ -163,13 +155,24 @@ namespace mj
             pos.node->prev = newnode;
         }
 
+        iterator erase(iterator pos)
+        {
+            _Node *next = pos.node->next;
+            _Node *prev = pos.node->prev;
+            prev->next = next;
+            next->prev = prev;
+            _Node_alloc::destroy(pos.node);
+            return iterator(next);
+        }
+
         void push_front(const T &value)
         {
             insert(begin(), value);
         }
 
-        void pop_front(const T &value)
+        void pop_front()
         {
+            erase(begin());
         }
 
         void push_back(const T &value)
@@ -179,6 +182,60 @@ namespace mj
 
         void pop_back(const T &value)
         {
+            erase(--end());
+        }
+
+        void clear()
+        {
+            _Node *cur = node->next;
+            while (cur != node)
+            {
+                _Node *tmp = cur;
+                cur = cur->next;
+                _Node_alloc::destroy(cur);
+                _Node_alloc::deallocate(cur);
+            }
+            node->next = node;
+            node->prev = node;
+        }
+
+        void remove(const T &value)
+        {
+            iterator first = begin();
+            iterator last = end();
+            while (first != last)
+            {
+                iterator next = first;
+                ++next;
+                if (*first == value)
+                {
+                    erase(first);
+                }
+                first = next;
+            }
+        }
+
+        void unique()
+        {
+            // remove continous same elements
+            iterator first = begin();
+            iterator last = end();
+            if (first == last)
+                return;
+
+            iterator next = first;
+            while (++next != last)
+            {
+                if (*first == *next)
+                {
+                    erase(next);
+                }
+                else
+                {
+                    first = next;
+                }
+                next = first;
+            }
         }
 
     private:

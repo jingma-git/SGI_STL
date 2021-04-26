@@ -115,6 +115,7 @@ namespace mj
         {
             _Node *p = get_node();
             p->value = value;
+            return p;
         }
 
     public:
@@ -132,7 +133,7 @@ namespace mj
         //capacity
         bool empty()
         {
-            return node.next == node;
+            return node->next == node;
         }
 
         size_t size()
@@ -153,6 +154,7 @@ namespace mj
             newnode->prev = pos.node->prev->prev;
             pos.node->prev->next = newnode;
             pos.node->prev = newnode;
+            return newnode;
         }
 
         iterator erase(iterator pos)
@@ -242,4 +244,4 @@ namespace mj
         _Node *node;
     };
 
-};
+}; // namespace mj

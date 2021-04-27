@@ -151,7 +151,7 @@ namespace mj
             // insert before pos
             _Node *newnode = create_node(value);
             newnode->next = pos.node;
-            newnode->prev = pos.node->prev->prev;
+            newnode->prev = pos.node->prev;
             pos.node->prev->next = newnode;
             pos.node->prev = newnode;
             return newnode;
@@ -194,8 +194,8 @@ namespace mj
             {
                 _Node *tmp = cur;
                 cur = cur->next;
-                _Node_alloc::destroy(cur);
-                _Node_alloc::deallocate(cur);
+                _Node_alloc::destroy(tmp);
+                _Node_alloc::deallocate(tmp);
             }
             node->next = node;
             node->prev = node;

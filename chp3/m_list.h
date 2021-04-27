@@ -2,6 +2,7 @@
 #include "m_def.h"
 #include "m_alloc.h"
 #include "m_iterator_base_funcs.h"
+#include <stdio.h>
 
 namespace mj
 {
@@ -91,6 +92,18 @@ namespace mj
 
     public:
         list() { empty_initialize(); }
+
+        template <class InputIterator>
+        list(InputIterator first, InputIterator last)
+        {
+            empty_initialize();
+            while (first != last)
+            {
+                push_back(*first);
+                ++first;
+            }
+        }
+
         ~list()
         {
             clear();
@@ -237,6 +250,22 @@ namespace mj
                     first = next;
                 }
                 next = first;
+            }
+        }
+
+        void transfer(iterator position, iterator first, iterator last)
+        {
+            if (position != last)
+            {
+                // from back to front, change next pointer
+                (last.node->prev)->next = position.node;
+                (first.node->prev)->next = last.node;
+                (position.node->prev)->next = first.node;
+                // from back to front, change prev pointer
+                _Node *tmp = position.node->prev;
+                (position.node)->prev = (last.node)->prev;
+                (last.node)->prev = (first.node)->prev;
+                (first.node)->prev = tmp;
             }
         }
 

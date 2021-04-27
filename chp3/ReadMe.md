@@ -70,3 +70,6 @@ struct random_access_iterator_tag : public bidirectional_iterator_tag
 {
 };
 ```
+
+## BUGs
+1. https://github.com/microsoft/vscode-cmake-tools/issues/1060

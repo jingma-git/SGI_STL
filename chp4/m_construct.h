@@ -14,6 +14,19 @@ namespace mj
         new ((void *)p) T();
     }
 
+    // construct() 接受一个指针 __p 和 一个初值 __value。
+    template <class _T1, class _T2>
+    inline void construct(_T1 *__p, const _T2 &__value)
+    {
+        _Construct(__p, __value);
+    }
+
+    template <class _T1>
+    inline void construct(_T1 *__p)
+    {
+        _Construct(__p);
+    }
+
     // 第一个版本，接受一个指针，准备将该指针所指之物析构掉。
     template <class _Tp>
     inline void _Destroy(_Tp *__pointer)
@@ -75,4 +88,4 @@ namespace mj
     {
         _Destroy(__first, __last);
     }
-};
+}; // namespace mj

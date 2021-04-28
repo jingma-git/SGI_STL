@@ -23,6 +23,23 @@ namespace mj
 
         void insert_aux(iterator position, const T &x)
         {
+            if (finish != end_of_storage)
+            {
+            }
+            else
+            {
+                const size_type old_size = size();
+                const size_type len = old_size != 0 ? 2 * old_size : 1;
+
+                iterator new_start = Alloc::allocate(len);
+                iterator new_finish = new_start;
+            }
+        }
+
+        void deallocate()
+        {
+            if (start)
+                Alloc::deallocate(start);
         }
 
         void fill_initialize(size_type n, const T &value)
@@ -52,6 +69,19 @@ namespace mj
             Alloc::deallocate(start);
         }
 
+        void push_back(const T &x)
+        {
+            if (finish != end_of_storage)
+            {
+                construct(finish, x);
+                ++finish;
+            }
+            else
+            {
+                insert_aux(end(), x);
+            }
+        }
+
     protected:
         iterator allocate_and_fill(size_type n, const T &x)
         {
@@ -60,4 +90,4 @@ namespace mj
             return result;
         }
     };
-}
+} // namespace mj

@@ -3,5 +3,6 @@
 
 int main()
 {
+    mj::vector<int> ints(10);
     return 0;
 }

@@ -30,4 +30,21 @@ namespace mj
         typedef typename iterator_traits<InputIterator>::iterator_category category;
         return _distance(first, last, category());
     }
+
+    template <class Iterator>
+    inline typename iterator_traits<Iterator>::iterator_category
+    iterator_category(const Iterator &)
+    {
+        // return input_iterator_tag() or output_iterator_tag() or forward_iterator_tag()
+        // or bidirectional_iterator_tag() or random_access_iterator_tag()
+        typedef typename iterator_traits<Iterator>::iterator_category category;
+        return category();
+    }
+
+    template <class Iterator>
+    inline typename iterator_traits<Iterator>::value_type *
+    value_type(const Iterator &)
+    {
+        return static_cast<typename iterator_traits<Iterator>::value_type *>(0);
+    }
 };

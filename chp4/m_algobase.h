@@ -139,4 +139,88 @@ namespace mj
     __MJ_COPY_TRIVIAL(long double)
 #undef __MJ_COPY_TRIVIAL
 #endif
+
+    //--------------------------------------------------
+    // copy_backward
+    // 逆向复制
+    template <class _BidirectionalIter1, class _BidirectionalIter2,
+              class _Distance>
+    inline _BidirectionalIter2 __copy_backward(_BidirectionalIter1 __first,
+                                               _BidirectionalIter1 __last,
+                                               _BidirectionalIter2 __result,
+                                               bidirectional_iterator_tag,
+                                               _Distance *)
+    {
+        while (__first != __last)
+            *--__result = *--__last;
+        return __result;
+    }
+
+    template <class _RandomAccessIter, class _BidirectionalIter, class _Distance>
+    inline _BidirectionalIter __copy_backward(_RandomAccessIter __first,
+                                              _RandomAccessIter __last,
+                                              _BidirectionalIter __result,
+                                              random_access_iterator_tag,
+                                              _Distance *)
+    {
+        for (_Distance __n = __last - __first; __n > 0; --__n)
+            *--__result = *--__last;
+        return __result;
+    }
+
+    // This dispatch class is a workaround for compilers that do not
+    // have partial ordering of function templates.  All we're doing is
+    // creating a specialization so that we can turn a call to copy_backward
+    // into a memmove whenever possible.
+
+    template <class _BidirectionalIter1, class _BidirectionalIter2,
+              class _BoolType>
+    struct __copy_backward_dispatch
+    {
+        typedef typename iterator_traits<_BidirectionalIter1>::iterator_category
+            _Cat;
+        typedef typename iterator_traits<_BidirectionalIter1>::difference_type
+            _Distance;
+
+        static _BidirectionalIter2 copy(_BidirectionalIter1 __first,
+                                        _BidirectionalIter1 __last,
+                                        _BidirectionalIter2 __result)
+        {
+            return __copy_backward(__first, __last, __result, _Cat(), (_Distance *)0);
+        }
+    };
+
+    template <class _Tp>
+    struct __copy_backward_dispatch<_Tp *, _Tp *, __true_type>
+    {
+        static _Tp *copy(const _Tp *__first, const _Tp *__last, _Tp *__result)
+        {
+            printf("copy backward trivial!\n");
+            const ptrdiff_t _Num = __last - __first;
+            memmove(__result - _Num, __first, sizeof(_Tp) * _Num);
+            return __result - _Num;
+        }
+    };
+
+    template <class _Tp>
+    struct __copy_backward_dispatch<const _Tp *, _Tp *, __true_type>
+    {
+        static _Tp *copy(const _Tp *__first, const _Tp *__last, _Tp *__result)
+        {
+            return __copy_backward_dispatch<_Tp *, _Tp *, __true_type>::copy(__first, __last, __result);
+        }
+    };
+
+    template <class _BI1, class _BI2>
+    inline _BI2 copy_backward(_BI1 __first, _BI1 __last, _BI2 __result)
+    {
+        // __STL_REQUIRES(_BI1, _BidirectionalIterator);
+        // __STL_REQUIRES(_BI2, _Mutable_BidirectionalIterator);
+        // __STL_CONVERTIBLE(typename iterator_traits<_BI1>::value_type,
+        //                   typename iterator_traits<_BI2>::value_type);
+        typedef typename __type_traits<typename iterator_traits<_BI2>::value_type>::has_trivial_assignment_operator
+            _Trivial;
+        return __copy_backward_dispatch<_BI1, _BI2, _Trivial>::copy(__first, __last, __result);
+    }
+
 } // namespace mj

@@ -2,7 +2,7 @@
 #include "m_uninitialized.h"
 #include "m_construct.h"
 #include "m_def.h"
-
+#include "m_algo.h"
 namespace mj
 {
     template <class T, class Alloc = mj::allocator<T>>
@@ -13,6 +13,7 @@ namespace mj
         typedef T *pointer;
         typedef T &reference;
         typedef T *iterator;
+        typedef const T *const_iterator;
         typedef size_t size_type;
         typedef ptrdiff_t difference_type;
 
@@ -26,7 +27,7 @@ namespace mj
         {
             if (finish != end_of_storage)
             {
-                construct(finish, x);
+                construct(finish, *(finish - 1));
                 ++finish;
                 T x_copy = x;
                 copy_backward(position, finish - 2, finish - 1);
@@ -79,6 +80,8 @@ namespace mj
     public:
         iterator begin() { return start; }
         iterator end() { return finish; }
+        const_iterator begin() const { return start; }
+        const_iterator end() const { return finish; }
         size_type size() const { return size_type(end() - begin()); }
         size_type capacity() const { return size_type(end_of_storage - begin()); }
         bool empty() const { return begin() == end(); }
@@ -106,6 +109,88 @@ namespace mj
             else
             {
                 insert_aux(end(), x);
+            }
+        }
+
+        void pop_back()
+        {
+            --finish;
+            destroy(finish);
+        }
+
+        iterator erase(iterator first, iterator last)
+        {
+            iterator i = mj::copy(last, finish, first);
+            destroy(i, finish);
+            finish = finish - (last - first);
+            return first;
+        }
+
+        iterator erase(iterator position)
+        {
+            if (position != end())
+            {
+                copy(position + 1, finish, position);
+                --finish;
+                destroy(finish);
+                return finish;
+            }
+        }
+
+        void clear()
+        {
+            erase(begin(), end());
+        }
+
+        iterator insert(iterator position, size_type n, const T &x)
+        {
+            if (n != 0)
+            {
+                if (size_type(end_of_storage - finish) >= n) // space is available
+                {
+                    T x_copy = x;
+                    const size_type elems_after = finish - position;
+                    iterator old_finish = finish;
+                    if (elems_after > n)
+                    {
+                        uninitialized_copy(finish - n, finish, finish);
+                        finish += n;
+                        copy_backward(position, old_finish - n, old_finish);
+                        fill(position, position + n, x_copy);
+                    }
+                    else
+                    {
+                        uninitialized_fill_n(finish, n - elems_after, x_copy);
+                        finish += n - elems_after;
+                        uninitialized_copy(position, old_finish, finish);
+                        finish += elems_after;
+                        fill(position, old_finish, x_copy);
+                    }
+                }
+                else
+                {
+                    const size_type old_size = size();
+                    const size_type len = old_size + max(old_size, n);
+                    iterator new_start = Alloc::allocate(len);
+                    iterator new_finish = new_start;
+                    try
+                    {
+                        new_finish = uninitialized_copy(start, position, new_start);
+                        new_finish = uninitialized_fill_n(new_finish, n, x);
+                        new_finish = uninitialized_copy(position, finish, new_finish);
+                    }
+                    catch (...)
+                    {
+                        destroy(new_start, new_finish);
+                        Alloc::deallocate(new_start);
+                        throw;
+                    }
+                    destroy(start, finish);
+                    deallocate();
+                    start = new_start;
+                    finish = new_finish;
+                    end_of_storage = new_start + len;
+                }
             }
         }
 

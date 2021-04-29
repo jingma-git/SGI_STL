@@ -15,19 +15,18 @@ struct display
 
 int main()
 {
-    max()
     {
         int ia[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-        cout << "output end overlap with input, no problem! trivial" << endl;
-        copy(ia + 2, ia + 7, ia);
+        cout << "output end overlap with input, no problem!" << endl;
+        copy_backward(ia + 2, ia + 7, ia + 9);
         for_each(ia, ia + 9, display<int>());
         cout << endl;
     }
 
     {
         int ia[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-        cout << "output start overlap with input, no problem! trivial" << endl;
-        copy(ia + 2, ia + 7, ia + 4);
+        cout << "output start overlap with input trivial" << endl;
+        copy_backward(ia + 2, ia + 7, ia + 4);
         for_each(ia, ia + 9, display<int>());
         cout << endl;
     }
@@ -44,8 +43,8 @@ int main()
         cout << *last << endl;
 
         deque<int>::iterator result = id.begin();
-        advance(result, 4);
-        copy(first, last, result);
+        advance(result, 5);
+        copy_backward(first, last, result);
         for_each(id.begin(), id.end(), display<int>());
         cout << endl;
     }

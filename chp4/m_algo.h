@@ -8,4 +8,13 @@ namespace mj
             f(*first);
         return f;
     }
+
+    template <class T>
+    inline const T &max(const T &a, const T &b)
+    {
+        if (a < b)
+            return b;
+        else
+            return a;
+    }
 }

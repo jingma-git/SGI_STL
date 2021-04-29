@@ -74,5 +74,6 @@ int main()
     iv.clear();
     cout << "size=" << iv.size() << endl;
     cout << "capacity=" << iv.capacity() << endl;
+
     return 0;
 }

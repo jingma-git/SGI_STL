@@ -2,7 +2,7 @@
 **new**: `A* a = new A`, call void* operator new(size_t) and then A's constructor <br>
 **operator new**:  `void* operator new(size_t n)`, allocate space
 
-```
+```cpp
 A* ptr = static_cast<A*> operator new(5*sizeof(A)); // (1)
 A* ptr = (A*)malloc(5*sizeof(A)); // has similar effects as (1)
 ```
@@ -10,7 +10,7 @@ A* ptr = (A*)malloc(5*sizeof(A)); // has similar effects as (1)
 **placement new**: `new (pointer) A()`,  call constructor and place content to space, is crucial to improve efficiency <br>
 **operator delete**: `operator delete(void*)`, release space
 
-```
+```cpp
 operator delete(ptr); 
 free(ptr);
 ```
@@ -22,7 +22,7 @@ partial specialization only for class template
 tag_type: input_iterator_tag, forward_iterator_tag ... __true_type, __false_type <br>
 use traits and func(tag_type) to unditionally select which implementation to call
 
-```
+```cpp
 struct __true_type{};
 struct __false_type{};
 

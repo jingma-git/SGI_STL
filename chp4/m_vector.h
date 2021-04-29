@@ -21,10 +21,16 @@ namespace mj
         iterator finish;         // current space
         iterator end_of_storage; // available space
 
+        // called by push_back(val), insert(position, val)
         void insert_aux(iterator position, const T &x)
         {
             if (finish != end_of_storage)
             {
+                construct(finish, x);
+                ++finish;
+                T x_copy = x;
+                copy_backward(position, finish - 2, finish - 1);
+                *position = x_copy;
             }
             else
             {
@@ -33,6 +39,27 @@ namespace mj
 
                 iterator new_start = Alloc::allocate(len);
                 iterator new_finish = new_start;
+                try
+                {
+                    // copy start-position from old vector to new_start and on in new vector
+                    new_finish = uninitialized_copy(start, position, new_start);
+                    construct(new_finish, x);
+                    ++new_finish;
+                    // copy position-finish from old vector to new_finish=end_of_storage in new vector
+                    new_finish = uninitialized_copy(position, finish, new_finish);
+                }
+                catch (...)
+                {
+                    destroy(new_start, new_finish);
+                    Alloc::deallocate(new_start);
+                    throw;
+                }
+                destroy(begin(), end());
+                deallocate();
+
+                start = new_start;
+                finish = new_finish;
+                end_of_storage = new_start + len;
             }
         }
 

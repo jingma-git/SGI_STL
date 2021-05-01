@@ -1,6 +1,6 @@
 #include <vector>
 #include <iostream>
-
+#include <algorithm>
 using namespace std;
 
 struct A
@@ -14,7 +14,9 @@ struct A
 int main()
 {
     cout << sizeof(A *) << " " << sizeof(unsigned long) << " sizeof(double)" << sizeof(double) << endl;
-
+    vector<int> tests;
+    tests.reserve(2);
+    cout << tests.size() << " " << tests.capacity() << endl;
     // vector<A *> aptrs;
     int i;
     vector<int> iv(2, 9);

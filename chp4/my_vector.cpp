@@ -15,6 +15,7 @@ struct display
 
 int main()
 {
+    cout << sizeof(size_t) << " " << sizeof(unsigned int) << " " << sizeof(int) << " " << sizeof(long) << endl;
     int i;
     mj::vector<int> iv(2, 9);
     cout << "size=" << iv.size() << endl;

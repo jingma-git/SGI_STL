@@ -15,7 +15,7 @@ struct display
 
 int main()
 {
-    max()
+
     {
         int ia[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
         cout << "output end overlap with input, no problem! trivial" << endl;

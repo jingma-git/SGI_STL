@@ -161,5 +161,6 @@ namespace mj
 
         size_type size() const { return finish - start; }
         size_type max_size() const { return size_type(-1); }
+        bool empty() const { return finish == start; }
     };
 }; // namespace mj

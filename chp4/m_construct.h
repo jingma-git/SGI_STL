@@ -1,17 +1,18 @@
 #pragma once
 #include <new> // used for placement new
+#include "m_type_traits.h"
 namespace mj
 {
     template <class T1, class T2>
     inline void _Construct(T1 *p, const T2 &value)
     {
-        new ((void *)p) T1(value); // placement new
+        new (p) T1(value); // placement new
     }
 
     template <class T>
     inline void _Construct(T *p)
     {
-        new ((void *)p) T();
+        new (p) T();
     }
 
     // construct() 接受一个指针 __p 和 一个初值 __value。
@@ -29,15 +30,9 @@ namespace mj
 
     // 第一个版本，接受一个指针，准备将该指针所指之物析构掉。
     template <class _Tp>
-    inline void _Destroy(_Tp *__pointer)
-    {
-        __pointer->~_Tp();
-    }
-
-    template <class _Tp>
     inline void destroy(_Tp *__pointer)
     {
-        _Destroy(__pointer);
+        __pointer->~_Tp();
     }
 
     // 若是 __false_type，这才以循环的方式遍历整个范围，并在循环中每经历一个对象就调用第一个版本的 destory()。

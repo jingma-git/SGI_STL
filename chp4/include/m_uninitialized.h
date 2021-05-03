@@ -91,4 +91,47 @@ namespace mj
         return __uninitialized_copy(__first, __last, __result,
                                     value_type(__result));
     }
+
+    // Valid if copy construction is equivalent to assignment, and if the
+    // destructor is trivial.
+    template <class _ForwardIter, class _Tp>
+    inline void
+    __uninitialized_fill_aux(_ForwardIter __first, _ForwardIter __last,
+                             const _Tp &__x, __true_type)
+    {
+        mj::fill(__first, __last, __x);
+    }
+
+    template <class _ForwardIter, class _Tp>
+    void
+    __uninitialized_fill_aux(_ForwardIter __first, _ForwardIter __last,
+                             const _Tp &__x, __false_type)
+    {
+        _ForwardIter __cur = __first;
+        try
+        {
+            for (; __cur != __last; ++__cur)
+                _Construct(&*__cur, __x);
+        }
+        catch (...)
+        {
+            _Destroy(__first, __cur);
+        };
+    }
+
+    template <class _ForwardIter, class _Tp, class _Tp1>
+    inline void __uninitialized_fill(_ForwardIter __first,
+                                     _ForwardIter __last, const _Tp &__x, _Tp1 *)
+    {
+        typedef typename __type_traits<_Tp1>::is_POD_type _Is_POD;
+        __uninitialized_fill_aux(__first, __last, __x, _Is_POD());
+    }
+
+    template <class _ForwardIter, class _Tp>
+    inline void uninitialized_fill(_ForwardIter __first,
+                                   _ForwardIter __last,
+                                   const _Tp &__x)
+    {
+        __uninitialized_fill(__first, __last, __x, value_type(__first));
+    }
 };

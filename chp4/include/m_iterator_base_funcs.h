@@ -47,4 +47,15 @@ namespace mj
     {
         return static_cast<typename iterator_traits<Iterator>::value_type *>(0);
     }
+
+    template <class _Iter>
+    inline typename iterator_traits<_Iter>::difference_type *
+    distance_type(const _Iter &)
+    {
+        return static_cast<typename iterator_traits<_Iter>::difference_type *>(0);
+    }
+
+#define __ITERATOR_CATEGORY(__i) iterator_category(__i)
+#define __DISTANCE_TYPE(__i) distance_type(__i)
+#define __VALUE_TYPE(__i) value_type(__i)
 };

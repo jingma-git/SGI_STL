@@ -12,6 +12,7 @@ namespace mj
         typedef T value_type;
         typedef T *pointer;
         typedef T &reference;
+        typedef const T &const_reference;
         typedef T *iterator;
         typedef const T *const_iterator;
         typedef size_t size_type;
@@ -82,6 +83,8 @@ namespace mj
         iterator end() { return finish; }
         const_iterator begin() const { return start; }
         const_iterator end() const { return finish; }
+        reference front() { return *start; }
+        reference back() { return *(finish - 1); }
         size_type size() const { return size_type(end() - begin()); }
         size_type capacity() const { return size_type(end_of_storage - begin()); }
         bool empty() const { return begin() == end(); }
@@ -91,6 +94,14 @@ namespace mj
         vector(size_type n, const T &value) { fill_initialize(n, value); }
         vector(int n, const T &value) { fill_initialize(n, value); }
         vector(long n, const T &value) { fill_initialize(n, value); }
+        vector(iterator first, iterator last)
+        {
+            size_type n = last - first;
+            start = Alloc::allocate(n);
+            end_of_storage = finish;
+            finish = uninitialized_copy(first, last, start);
+        }
+
         explicit vector(size_type n) { fill_initialize(n, T()); }
 
         ~vector()

@@ -86,6 +86,7 @@ namespace mj
         typedef _list_node<T> _Node;
         typedef mj::allocator<_Node> _Node_alloc;
 
+        typedef const T &const_reference;
         typedef typename iterator::reference reference;
         typedef typename iterator::pointer pointer;
         typedef typename iterator::value_type value_type;

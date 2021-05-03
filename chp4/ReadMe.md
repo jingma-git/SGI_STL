@@ -53,9 +53,23 @@ __uninitialized_fill_n(_ForwardIter __first, _Size __n, const _Tp &__x, _Tp1 *)
 ## vector
 allocate new space -> move elements from old space to new space -> deallocate old space
 
+## list
+const-time insertion/deletion but linear time access
+
 ## deque
 lists of individual dynamically allocated memory blocks (when user uses it, it seems a wholesome continous memory),
 constant time access,
 const-time insertion and deletion at both end,
 linear-time insertion and deletion from middle
 
+### stack
+first-in-last-out<br>
+container adapter for deque/list, no iterator
+
+### queue
+first-in-first-out<br>
+container adapter for deque/list, no iterator
+
+## priority_queue
+complete binary tree<br>
+container adpater for vector..., use make_heap, push_heap, pop_heap as underlying algo to access the largest element in each iteration

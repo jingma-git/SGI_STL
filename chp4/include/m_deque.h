@@ -130,6 +130,7 @@ namespace mj
     public:
         typedef T value_type;
         typedef T &reference;
+        typedef const T &const_reference;
         typedef T *pointer;
         typedef size_t size_type;
         typedef _deque_iterator<T, T &, T *> iterator;
@@ -289,7 +290,10 @@ namespace mj
         }
 
     public:
-        deque() : start(), finish(), map(0), map_size(0), initial_map_size(8) {}
+        deque() : start(), finish(), map(0), map_size(0), initial_map_size(8)
+        {
+            create_map_and_nodes(0);
+        }
         deque(int n, const value_type &value) : start(), finish(), map(0), map_size(0), initial_map_size(8)
         {
             fill_initialize(n, value);

@@ -50,7 +50,7 @@ namespace mj
     template <class _ForwardIterator>
     inline void __destroy_aux(_ForwardIterator, _ForwardIterator, __true_type)
     {
-        printf("destroy trivial\n");
+        // printf("destroy trivial\n");
     }
 
     // 利用__type_traits<T>判断该类型的析构函数是否需要做什么。

@@ -10,14 +10,14 @@ namespace mj
     template <class _ForwardIter, class _Size, class _Tp>
     inline _ForwardIter __uninitialized_fill_n_aux(_ForwardIter __first, _Size __n, const _Tp &__x, __true_type)
     {
-        printf("trivial initalization!\n");
+        // printf("trivial initalization!\n");
         return fill_n(__first, __n, __x);
     }
 
     template <class _ForwardIter, class _Size, class _Tp>
     inline _ForwardIter __uninitialized_fill_n_aux(_ForwardIter __first, _Size __n, const _Tp &__x, __false_type)
     {
-        printf("non-trivial initalization!\n");
+        // printf("non-trivial initalization!\n");
         for (; __n > 0; --__n, ++__first)
         {
             _Construct(&*__first, __x); // call constructor

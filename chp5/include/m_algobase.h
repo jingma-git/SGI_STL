@@ -63,7 +63,7 @@ namespace mj
     inline _Tp *
     __copy_trivial(const _Tp *__first, const _Tp *__last, _Tp *__result)
     {
-        printf("copy trivial\n");
+        // printf("copy trivial\n");
         memmove(__result, __first, sizeof(_Tp) * (__last - __first));
         return __result + (__last - __first);
     }
@@ -221,6 +221,14 @@ namespace mj
         typedef typename __type_traits<typename iterator_traits<_BI2>::value_type>::has_trivial_assignment_operator
             _Trivial;
         return __copy_backward_dispatch<_BI1, _BI2, _Trivial>::copy(__first, __last, __result);
+    }
+
+    template <class _Tp>
+    inline void swap(_Tp &__a, _Tp &__b)
+    {
+        _Tp __tmp = __a;
+        __a = __b;
+        __b = __tmp;
     }
 
 } // namespace mj

@@ -92,4 +92,139 @@ namespace mj
     {
         return __find_if(first, last, mj::__iter_equals_val(val));
     }
+
+    template <class _ForwardIter, class _Tp, class _Distance>
+    _ForwardIter __lower_bound(_ForwardIter __first, _ForwardIter __last,
+                               const _Tp &__val, _Distance *)
+    {
+        _Distance __len = distance(__first, __last);
+        _Distance __half;
+        _ForwardIter __middle;
+
+        while (__len > 0)
+        {
+            __half = __len >> 1;
+            __middle = __first;
+            advance(__middle, __half);
+            if (*__middle < __val)
+            {
+                __first = __middle;
+                ++__first;
+                __len = __len - __half - 1;
+            }
+            else
+                __len = __half;
+        }
+        return __first;
+    }
+
+    template <class _ForwardIter, class _Tp>
+    inline _ForwardIter lower_bound(_ForwardIter __first, _ForwardIter __last,
+                                    const _Tp &__val)
+    {
+        return __lower_bound(__first, __last, __val,
+                             __DISTANCE_TYPE(__first));
+    }
+
+    template <class _ForwardIter, class _Tp, class _Compare, class _Distance>
+    _ForwardIter __lower_bound(_ForwardIter __first, _ForwardIter __last,
+                               const _Tp &__val, _Compare __comp, _Distance *)
+    {
+        _Distance __len = distance(__first, __last);
+        _Distance __half;
+        _ForwardIter __middle;
+
+        while (__len > 0)
+        {
+            __half = __len >> 1;
+            __middle = __first;
+            advance(__middle, __half);
+            if (__comp(*__middle, __val))
+            {
+                __first = __middle;
+                ++__first;
+                __len = __len - __half - 1;
+            }
+            else
+                __len = __half;
+        }
+        return __first;
+    }
+
+    template <class _ForwardIter, class _Tp, class _Compare>
+    inline _ForwardIter lower_bound(_ForwardIter __first, _ForwardIter __last,
+                                    const _Tp &__val, _Compare __comp)
+    {
+        return __lower_bound(__first, __last, __val, __comp,
+                             __DISTANCE_TYPE(__first));
+    }
+
+    template <class _ForwardIter, class _Tp, class _Distance>
+    _ForwardIter __upper_bound(_ForwardIter __first, _ForwardIter __last,
+                               const _Tp &__val, _Distance *)
+    {
+        _Distance __len = 0;
+        distance(__first, __last, __len);
+        _Distance __half;
+        _ForwardIter __middle;
+
+        while (__len > 0)
+        {
+            __half = __len >> 1;
+            __middle = __first;
+            advance(__middle, __half);
+            if (__val < *__middle)
+                __len = __half;
+            else
+            {
+                __first = __middle;
+                ++__first;
+                __len = __len - __half - 1;
+            }
+        }
+        return __first;
+    }
+
+    template <class _ForwardIter, class _Tp>
+    inline _ForwardIter upper_bound(_ForwardIter __first, _ForwardIter __last,
+                                    const _Tp &__val)
+    {
+        return __upper_bound(__first, __last, __val,
+                             __DISTANCE_TYPE(__first));
+    }
+
+    template <class _ForwardIter, class _Tp, class _Compare, class _Distance>
+    _ForwardIter __upper_bound(_ForwardIter __first, _ForwardIter __last,
+                               const _Tp &__val, _Compare __comp, _Distance *)
+    {
+        _Distance __len = 0;
+        distance(__first, __last, __len);
+        _Distance __half;
+        _ForwardIter __middle;
+
+        while (__len > 0)
+        {
+            __half = __len >> 1;
+            __middle = __first;
+            advance(__middle, __half);
+            if (__comp(__val, *__middle))
+                __len = __half;
+            else
+            {
+                __first = __middle;
+                ++__first;
+                __len = __len - __half - 1;
+            }
+        }
+        return __first;
+    }
+
+    template <class _ForwardIter, class _Tp, class _Compare>
+    inline _ForwardIter upper_bound(_ForwardIter __first, _ForwardIter __last,
+                                    const _Tp &__val, _Compare __comp)
+    {
+        return __upper_bound(__first, __last, __val, __comp,
+                             __DISTANCE_TYPE(__first));
+    }
+
 }

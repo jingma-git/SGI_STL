@@ -89,6 +89,7 @@ namespace mj
         size_type capacity() const { return size_type(end_of_storage - begin()); }
         bool empty() const { return begin() == end(); }
         reference operator[](size_type n) { return *(begin() + n); }
+        const_reference operator[](size_type n) const { return *(begin() + n); }
 
         vector() : start(0), finish(0), end_of_storage(0) {}
         vector(size_type n, const T &value) { fill_initialize(n, value); }
@@ -108,6 +109,15 @@ namespace mj
         {
             destroy(start, finish);
             Alloc::deallocate(start);
+        }
+
+        void reserve(size_type n)
+        {
+            if (capacity() < n)
+            {
+                const size_type old_size = size();
+                iterator tmp = allocate_and_copy(n, start, finish);
+            }
         }
 
         void push_back(const T &x)
@@ -205,12 +215,34 @@ namespace mj
             }
         }
 
+        void swap(vector<T, Alloc> &x)
+        {
+            mj::swap(start, x.start);
+            mj::swap(finish, x.finish);
+            mj::swap(end_of_storage, x.end_of_storage);
+        }
+
     protected:
         iterator allocate_and_fill(size_type n, const T &x)
         {
             iterator result = Alloc::allocate(n);
             uninitialized_fill_n(result, n, x);
             return result;
+        }
+
+        iterator allocate_and_copy(size_type n, iterator first, iterator last)
+        {
+            iterator result = Alloc::allocate(n);
+            try
+            {
+                uninitialized_copy(first, last, result);
+                return result;
+            }
+            catch (...)
+            {
+                Alloc::deallocate(result, n);
+                throw;
+            }
         }
     };
 } // namespace mj

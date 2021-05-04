@@ -106,4 +106,16 @@ namespace mj
     {
         bool operator()(const _Tp &__x) const { return !__x; }
     };
+
+    // identity is an extensions: it is not part of the standard.
+    template <class _Tp>
+    struct _Identity : public unary_function<_Tp, _Tp>
+    {
+        const _Tp &operator()(const _Tp &__x) const { return __x; }
+    };
+
+    template <class _Tp>
+    struct identity : public _Identity<_Tp>
+    {
+    };
 }

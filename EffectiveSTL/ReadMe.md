@@ -1,24 +1,47 @@
 # Containers
+
 ## Item 1. Choose your containers with care
-## Item 2. Beaware the illusion of container-independent code ?
+
+## Item 2. Beaware the illusion of container-independent code
+
+1. Associative containers offer logN-time lower_bound, upper_bound, and equal_range member functions, but sequence containers do not.
+2. operator[] exists for map not for multimap
+3. To make container change easier, write the following code
+
+```cpp
+//!!! typedef is your friend
+class Widget{...};
+typedef vector<Widget, SpecialAllocator<Widget>> WidgetContainer;
+typedef WidgetContainer::iterator WIterator;
+
+WidgetContainer vw;
+Widget bestWidget;
+WIterator it = find(vw.begin(), vw.end(), bestWidget);
+```
+
 ## Item 3. Make copying cheap and correct for objects in containers
 ## Item 4. Call empty() instead of c.size()==0
-## Item 5. Prefer range member functions to their single-element counterparts
+## Item 5. Prefer range member functions to their single-element counterparts ++
 ## Item 6. Be alert for C++'s most vexing parse ?
 ## Item 7. When using containers of newed pointers, remember to delete the pointers before container is destroyed
 ## Item 8. Never create containers of auto_ptrs
-## Item 9. Choose carefully among erasing options ?
-## Item 10. Be aware of allocator conventions and restrictions
+
+## Item 9. Choose carefully among erasing options ? +
+
+1. Sequence container: return a new iterator
+2. Associative Container: nothing
+
+## Item 10. Be aware of allocator conventions and restrictions +
 ## Item 11. Understand the legitimate uses of custom allocators
 ## Item 12. Have realistic expectations about the thread safety of STL containers
 
 # vector and string
-## Item 13. Prefer vector and string to dynamically allocated arrays
-## Item 14. Use reserve to avoid unnecessary allocations (OK)
+## Item 13. Prefer vector and string to dynamically allocated arrays +
+## Item 14. Use reserve to avoid unnecessary allocations (OK) +
 ## Item 15. Be aware of variations in string implementations
-## Item 16. Know how to pass vector and string data to legacy APIs
+## Item 16. Know how to pass vector and string data to legacy APIs +
 ## Item 17. Use "the swap trick" to trim excess capacity ?
-## Item 18. Avoid using vector<bool>
+## Item 18. Avoid using vector<bool> +
 
 
 # Associative Containers
@@ -26,9 +49,9 @@
 ## Item 20. Specify comparison types for associative containers of pointers ?
 ## Item 21. Always have comparison functions return false for equal values
 ## Item 22. Avoid in-place key modification in set and multiset
-## Item 23. Consider replacing associative containers with sorted vectors
+## Item 23. Consider replacing associative containers with sorted vectors +
 ## Item 24. Choose carefully between map::operator[] and map-insert when efficiency is important
-## Item 25. Famlarize yourself with nonstandard hashed containers (OK)
+## Item 25. Famlarize yourself with nonstandard hashed containers (OK) +
 
 # Iterators
 ## Item 26. Prefer iterator to const iterator, reverse iterator, const reverse iterator
@@ -38,7 +61,10 @@
 
 # Algorithms
 ## Item 30. Make sure destination ranges are big enough
-## Item 31. Know your sorting options
+## Item 31. Know your sorting options +
+
+1. Use random access iterator: sort, stable_sort, partial_sort, nth_element
+
 ## Item 32. Follow remove-like algorithms by erase if you really want to remove something (OK)
 ## Item 33. Be wary of remove-like algorithms on containers of pointers
 ## Item 34. Note which algorithms expect sorted ranges

@@ -2,6 +2,11 @@
 
 ## Item 1. Choose your containers with care
 
+1. Transactional roll back: node container
+2. Iterator, pointer, and reference invalidation: node container
+3. Need to be sorted: hash-based container is not suitable
+4. Reference counting ? string
+
 ## Item 2. Beaware the illusion of container-independent code
 
 1. Associative containers offer logN-time lower_bound, upper_bound, and equal_range member functions, but sequence containers do not.
@@ -20,8 +25,11 @@ WIterator it = find(vw.begin(), vw.end(), bestWidget);
 ```
 
 ## Item 3. Make copying cheap and correct for objects in containers
+
+1. Copy in, copy out. The STL way.
+
 ## Item 4. Call empty() instead of c.size()==0
-## Item 5. Prefer range member functions to their single-element counterparts ++
+## Item 5. Prefer range member functions to their single-element counterparts +++
 ## Item 6. Be alert for C++'s most vexing parse ?
 ## Item 7. When using containers of newed pointers, remember to delete the pointers before container is destroyed
 ## Item 8. Never create containers of auto_ptrs
@@ -37,7 +45,7 @@ WIterator it = find(vw.begin(), vw.end(), bestWidget);
 
 # vector and string
 ## Item 13. Prefer vector and string to dynamically allocated arrays +
-## Item 14. Use reserve to avoid unnecessary allocations (OK) +
+## Item 14. Use reserve to avoid unnecessary allocations (OK) ++
 ## Item 15. Be aware of variations in string implementations
 ## Item 16. Know how to pass vector and string data to legacy APIs +
 ## Item 17. Use "the swap trick" to trim excess capacity ?
@@ -61,11 +69,11 @@ WIterator it = find(vw.begin(), vw.end(), bestWidget);
 
 # Algorithms
 ## Item 30. Make sure destination ranges are big enough
-## Item 31. Know your sorting options +
+## Item 31. Know your sorting options ++
 
 1. Use random access iterator: sort, stable_sort, partial_sort, nth_element
 
-## Item 32. Follow remove-like algorithms by erase if you really want to remove something (OK)
+## Item 32. Follow remove-like algorithms by erase if you really want to remove something (OK) +
 ## Item 33. Be wary of remove-like algorithms on containers of pointers
 ## Item 34. Note which algorithms expect sorted ranges
     set_union, set_difference, set_intersection, set_sym_difference

@@ -5,7 +5,7 @@ class Widget
 {
 public:
     // virtual void flip() const = 0;
-    void flip() const;
+    virtual void flip() const = 0;
 };
 
 class Bell : public Widget

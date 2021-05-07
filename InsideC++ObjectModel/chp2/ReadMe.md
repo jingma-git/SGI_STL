@@ -8,7 +8,7 @@ https://davidlim2007.wordpress.com/page/2/
 
 ## 2.1 Default Constructor Construction
 
-### When will compiler will implicitly write 'constructor' code for you?
+### When will compiler implicitly write 'constructor' code for you?
 
 1. Member class with default constructor
 2. Base class with default constructor
@@ -57,7 +57,7 @@ class QOpenGLWidget: public Widget
 class B{public: int i;}
 class X: public virtual B{public: int j;}
 class Y: public virtual B{public: int k;}
-class AA: public A, public B{public: int d;}
+class AA: public A, public B{public: int d;       }
 ```
 
 ### Common mistakes for new C++ programmer
@@ -69,3 +69,34 @@ class AA: public A, public B{public: int d;}
 2. Compiler-synthesized default constructor provides explicit default initializers for each data member declared in class.
 
    Within the synthesized default constructor, only the base class subobjects and member class objects are initialized. All other nonstatic data members, such as integers, pointers... are not initialized. It is the programmer's job to provide it in class implementation.
+
+## 2.2 Copy Constructor Construction
+
+### When will compiler implicitly write 'copy constructor' code for you (Not Bitwise Copy Semantics?)
+
+1. Member class with copy constructor existed (either explicitly specified by the programer or implicitly synthesized by the compiler)
+
+2. Base class with copy constructor existed (explicitly declared or implicilty synthesized)
+
+3. Class with virtual functions
+
+4. Class with virtual base class
+
+```cpp
+class ZooAnimal
+{
+    virtual void draw(){}
+};
+class Bear: public ZooAnimal
+{
+    virtual void draw(){}
+};
+
+void draw(const ZooAnimal& zoey){zoey.draw();}
+
+Bear yogi;
+ZooAnimal franny = yogi; // slice happens, the synthesized copy constructor set franny's vptr to ZooAnimal's vtbl's address instead of Bear's vtbl address
+draw(yogi); // invoke Bear::draw()
+draw(franny); // invoke ZooAnimal::draw()
+
+```

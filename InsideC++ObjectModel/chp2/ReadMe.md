@@ -64,7 +64,7 @@ class AA: public A, public B{public: int d;       }
 
 1. A default constructor is synthesized for every class that does not define one.
 
-   Only when one of above four situations happens compiler will write 'non-trivial constructor' for you. Classes that do not exhibit these characrteristics and that declare no default constructor are all said to have implicit, trivial default constructor. In practice, these trivial default constructor are not synthesized.
+   Only when one of above four situations happens will compiler write 'non-trivial constructor' for you. Classes that do not exhibit these characrteristics and that declare no default constructor are all said to have implicit, trivial default constructor. In practice, these trivial default constructor are not synthesized.
 
 2. Compiler-synthesized default constructor provides explicit default initializers for each data member declared in class.
 
@@ -100,3 +100,38 @@ draw(yogi); // invoke Bear::draw()
 draw(franny); // invoke ZooAnimal::draw()
 
 ```
+
+## 2.3 Program Transformation Semantics
+
+```cpp
+struct Point3i
+{
+    int x, y, z;
+    virtual void draw(){};
+    Point3i()
+    {
+        // this will set __vptr to 0
+        memset(this, 0, sizeof(Point3i));
+    }
+
+    Point3i(const Point3i &p)
+    {
+         // this will set __vptr to 0
+        memcpy(this, &p, sizeof(Point3i));
+    }
+};
+
+```
+
+## 2.4 Member intialization list
+
+### Three cases we must use intialization list
+
+1. When initializing a reference member
+2. When initializing a const member
+3. When invoking a base or member class constructor with a set of argments
+
+### Keypoints
+
+1. The compiler iterator over and possibly reorders  the initialization list to reflect orders of the members. It inserts code within the body of the constructor prior to any explicit user code.
+2. Initialize one member with another inside the constructor body, not in member initialization list.

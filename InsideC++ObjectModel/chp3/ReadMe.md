@@ -64,7 +64,7 @@ Is the access of data member x significantly different when accessed through the
 ```cpp
 Point3d origin, *pt = &origin;
 origin.x = 0.0;
-pt-> = 0.0;
+pt->x = 0.0;
 ```
 
 It is signficantly different when Point3d is a derived class containing a virtual base class in its inheritance hierarchy and x is an inherited member from that virtual base class. The resolution of the access must be delayed at runtime.

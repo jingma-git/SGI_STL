@@ -137,6 +137,7 @@ private:
 
 1. Copy all local data members
 2. Invoke the appropriate copying function in all base classes.
+
 ## chp3. Resouce Management
 
 ### Item 13: Use objects to manage resources

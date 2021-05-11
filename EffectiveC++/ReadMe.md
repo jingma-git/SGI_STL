@@ -12,20 +12,131 @@
 
 ### Item 5. Know what functions C++ silently writes and calls
 
-### Item 6. Explicitly disallow the use of compiler-generated functions you do not want ?
+Public, non-virtual
+
+1. Constructor
+2. Copy constructor
+3. Operator=
+4. Deconstructor
+
+### Item 6. Explicitly disallow the use of compiler-generated functions you do not want
+
+```cpp
+class Uncopy
+{
+protected:
+    Uncopy() {} // allow construction and destruction of derived objects
+    ~Uncopy() {}
+
+private:
+    Uncopy(const Uncopy &); // prevent copying
+    Uncopy &operator=(const Uncopy &);
+};
+
+class HomeForSale : private Uncopy
+{
+public:
+    HomeForSale() {}
+};
+```
 
 ### Item 7. Declare deconstructors virtual in polymorphic base classes (+)
 
+Declaring all deconstructors virtual is just as wrong as never declaring them virtual. For a concrete class, declaring deconstructor virtual will increase the object's size and make them unaccessible from C language.
+
+Declare a virtual destructor in a class and if and only if that class contains at least one virtual functions.
+
+***Classes not designed to be base classes or not designed to be used polymorphically should not declare virtual destructors. All STL containers, std::string, std::inupt_iterator_tag, Uncopy(Item6)...***
+
 ### Item 8. Prevent exceptions from leaving deconstructors
+
+```cpp
+class DBConnection
+{
+public:
+    static DBConnection create() {}
+    void close() {} // close connection; throw an exception if closing fails
+};
+
+class DBConn
+{
+public:
+    void close()
+    {
+        db.close(); // new function for client use
+        closed = true;
+    }
+
+    ~DBConn()
+    {
+        if (!closed)
+        {
+            try
+            {
+                db.close();
+            }
+            catch (...)
+            {
+                // std::abort() // terminate program
+                // swallow the exceptions
+            }
+        }
+    }
+
+private:
+    DBConnection db;
+    bool closed;
+};
+```
 
 ### Item 9. Never call virtual functions during construction or deconstruction ?
 
+Don't call virtual functions during construction or deconstruction, because such calls will never go to a more derived class than that of the currrently executing constructor or deconstructor.
+
+How to fix?
+
+If you can't use virtual functions to call down from base classes during contruction, you can compensate by having derived classes pass information up to base class constructors.
+
 ### Item 10. Have operator= return a reference to *this
 
-### Item 11:  Handle assignment to self in operator= ? (+)
+### Item 11:  Handle assignment to self in operator=
+
+***copy and swap***
+
+```cpp
+class Widget{...};
+Widget w;
+w = w;
+
+// handle self-assignment and ensure exception-safe
+class BitMap
+{
+};
+
+class Widget
+{
+    void swap(Widget &rhs) // exchange *this's data and rhs's data, Item29
+    {
+    }
+
+public:
+    Widget &operator=(const Widget &rhs)
+    {
+        // handle both self-assignment and exception
+        Widget temp(rhs); // make a copy of rhs's data
+        swap(temp);       // swap *this's data with rhs
+        return *this;
+    }
+
+private:
+    BitMap *pb;
+};
+```
 
 ### Item 12: Copy all parts of an object
 
+1. Copy all local data members
+2. Invoke the appropriate copying function in all base classes.
 ## chp3. Resouce Management
 
 ### Item 13: Use objects to manage resources

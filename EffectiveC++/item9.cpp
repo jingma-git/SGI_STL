@@ -1,66 +1,75 @@
-
 #include <iostream>
+#include <string>
 using namespace std;
 
-struct V
+// class Transanction
+// {
+// public:
+//     Transanction()
+//     {
+//         cout << "Transanction" << endl;
+//         logTransanction();
+//     }
+
+//     virtual void logTransanction() const;
+// };
+
+// class BuyTransation : public Transanction
+// {
+// public:
+//     virtual void logTransaction() const
+//     {
+//         cout << "buy transaction" << endl;
+//     }
+// };
+
+class Transanction
 {
-    virtual void f()
+public:
+    Transanction() {}
+
+    Transanction(const std::string &translog)
     {
-        cout << "V::f" << endl;
+        logTransanction(translog);
     }
 
-    virtual void g()
+    void logTransanction(const string &log) const
     {
-        cout << "V::g" << endl;
+        cout << log << endl;
     }
 };
 
-struct A : virtual V
+class BuyTransanction : public Transanction
 {
-    virtual void f()
+public:
+    BuyTransanction() : Transanction(createLogString())
     {
-        cout << "A::f" << endl;
+    }
+
+private:
+    static std::string createLogString()
+    {
+        return "BuyTransanction";
     }
 };
 
-struct B : virtual V
+class SellTransanction : public Transanction
 {
-    virtual void g()
+public:
+    SellTransanction() : Transanction(createLogString())
     {
-        cout << "B::g" << endl;
     }
 
-    B(V *, A *);
-};
-
-struct D : A, B
-{
-    virtual void f()
+private:
+    static std::string createLogString()
     {
-        cout << "D::f" << endl;
-    }
-
-    virtual void g()
-    {
-        cout << "D::g" << endl;
-    }
-
-    D() : B((A *)this, this)
-    {
+        return "SellTransanction";
     }
 };
-
-B::B(V *v, A *a)
-{
-    f();
-    g();
-
-    v->g();
-    a->f();
-}
 
 int main()
 {
-    D d;
+    BuyTransanction bt;
+    SellTransanction st;
     return 0;
 }

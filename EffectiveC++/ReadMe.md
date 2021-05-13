@@ -141,14 +141,39 @@ private:
 ## chp3. Resouce Management
 
 ### Item 13: Use objects to manage resources
-
+```cpp
+std::shared_ptr<Investment> pInv(createInvestment());
+```
 ### Item 14: Think carefully about copying behavior in resource-managing classes
+
+1. Prohibit copying
+2. Reference-count the underlying resouces
+3. Deep copy
+4. Resouces ownership transfer
 
 ### Item 15: Provide access to raw resources in resource-managing classes
 
-### Item 16: Use the same form in corresponding uses of new and delete (OK)
+```cpp
+Investment* rawPtr = pInv.get();
+```
+1. APIs often requires access to raw resources, so each RAII class should offer a way to get resources it manages.
+2. Access maybe via explicit conversion or implicit conversion. Explicit conversion is safer. Implicit conversion is more convenient.
+
+### Item 16: Use the same form in corresponding uses of new and delete
+
+1. new-delete
+2. new a[]---delete []a
 
 ### Item 17: Store newed objects in smart pointers in standalone statements
+```cpp
+std::shared_ptr<Widget> pw(new Widget);
+processWidget(pw, priority());
+// !!!! never do this
+// processWidget(std::shared_ptr<Widget>(new Widget), priority());
+// because: compiler may new Widget-->priority()-->shared_ptr(), 
+// exception may occur from the time a resource is created to the time the resouce is handled to a resource manager,
+// in this case, call to priority()
+```
 
 ## chp4. Design and Declarations
 

@@ -6,6 +6,9 @@
 
 ### Item 3: Use const whenever possible
 
+```cpp
+```
+
 ### Item 4. Make sure that objects are initialized before they're used
 
 ## chp2. Constructors, Deconstructors, and Assignment Operators

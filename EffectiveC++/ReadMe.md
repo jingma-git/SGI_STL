@@ -7,7 +7,36 @@ https://wizardforcel.gitbooks.io/100-gcc-tips/content/
 
 ### Item 2: Prefere consts, enums, and inlines to #defines
 
+***Prefer compiler to the preprocessor***
 https://en.wikipedia.org/wiki/C_preprocessor
+
+1. Constant pointers (usually put in header files)
+
+   ```cpp
+   const char* const authorName = "Bella";
+   ```
+
+2. Class-specific constants
+
+   For simple constants, prefer const objects or enums to #defines
+
+   ```cpp
+   class GamePlayer{
+   private:
+       // enum hack:
+       // for compilers that do not accept in-class static const
+       // like #define, you can never take address of enum, because they are just symbols
+       // good compilers will never set storage for const integral types
+       // fundamental technique of template metaprogramming
+       // enum{NumTurns = 5};
+       static const int NumTurns = 5; // constant declaration, may need to define it in source file
+       int scores[NumTurns];
+       static const double MaxScores; // in-class intialization is allowed only for integral types and only for constants
+   };
+   const double GamePlayer::MaxScores = 100.0;
+   ```
+
+   For function-like macros, prefer inline functions to #defines
 
 ### Item 3: Use const whenever possible
 
@@ -126,6 +155,34 @@ if (a *b = c) // error!!! not compile. prevent programmer from writing == (compa
    ```
 
 ### Item 4. Make sure that objects are initialized before they're used
+
+1. Mannually initialize objects of built-in type, because C++ only sometimes initalize external/static variables.
+2. Use member initialize list instead of assignment inside constructor.
+
+   Make sure all constructors initialize everything in the object.
+   Base classes are initialized before derived classes.
+   Within a class, data members are initialized in the order which they are declared.
+   To avoid bugs, list members in initailization list in the same order they're declared in the class.
+
+3. Avoid intialization order problems across translation units by replacing non-static objects with lcoal static objects.
+
+```cpp
+class FileSystem{};
+FileSystem& tfs(){
+    static FileSystem fs;
+    return fs;
+}
+class Directory{
+    Directory(){
+        size_t disks = tfs().numDisks(); // this ensures fs is initialized before being used
+    }
+};
+Directory& dir(){
+    static Directory direc;
+    return direc;
+}
+
+```
 
 ## chp2. Constructors, Deconstructors, and Assignment Operators
 

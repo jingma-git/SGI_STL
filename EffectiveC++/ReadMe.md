@@ -1,13 +1,129 @@
+https://stackoverflow.com/questions/6264249/how-does-the-compilation-linking-process-work
+https://wizardforcel.gitbooks.io/100-gcc-tips/content/
+
 ## chp1. Acustoming Yourself to C++
 
 ### Item 1: View C++ as a federation of languages
 
 ### Item 2: Prefere consts, enums, and inlines to #defines
 
+https://en.wikipedia.org/wiki/C_preprocessor
+
 ### Item 3: Use const whenever possible
 
+#### std::iterator behaves like raw pointer
+
 ```cpp
+    char greeting[] = "hello";
+    char *p0 = greeting;             // non-constant pointer, non-constant data
+    const char *p1 = greeting;       // non-constant pointer, const data
+    char *const p2 = greeting;       // constant pointer, non-constant data
+    const char *const p3 = greeting; // constant pointer, constant data
+
+    // STL iterator acts like raw_pointer
+    int a[] = {0, 1, 2};
+    std::vector<int> vec(a, a + 3);
+    // the iterator/pointer itself cannot be changed
+    // but the content it points to can be modified
+    const std::vector<int>::iterator iter = vec.begin(); // T* const;
+    *iter = 10;
+    // ++iter; // error!!! iter is constant
+
+    // the iterator can be changed, but the content it points cannot be changed
+    std::vector<int>::const_iterator citer = vec.begin(); // const T*;
+    ++citer;
+    // *citer = 10; // error!!! *cIter is const
 ```
+
+#### Make user-defined type behaves like built-in types
+
+```cpp
+class Rational{};
+const Rational operator*(const Rational &a, const Rational &b);
+
+Rational a(10), b(5), c(50);
+if (a *b = c) // error!!! not compile. prevent programmer from writing == (comparison) to = (assignment)
+```
+
+#### const Member Functions (on constant object)
+
+1. Bit constness vs Logical Constness
+
+   ***Bit(Compiler) Constness*** Constant member function isn't allowed to modify any of non-static data member.
+
+   ***Logical Constantness*** Avoid changing non-static data member in user-detected way.
+
+   ```cpp
+    class TextBlockV1
+    {
+    public:
+        // const mem_fun
+        const char &operator[](int pos) const
+        {
+            // do bounds checking
+            // log access data
+            // verify data integrity
+            return text[pos];
+        }
+
+        // char &operator[](int pos)
+        // {
+        //     // do bounds checking
+        //     // log access data
+        //     // verify data integrity
+        //     return text[pos];
+        // }
+        char &operator[](int pos)
+        {
+            return const_cast<char &>( // cast away constness of return-type for const mem_fun
+                static_cast<const TextBlockV1 &>(*this)[pos]
+                // cast *this to const and call const mem_fun,
+                // also avoiding end-less recursion if invoking on non-constant member
+            );
+        }
+
+    private:
+        std::string text;
+    };
+   ```
+
+2. Avoid code duplication by asking non-constant member function call const member function, ***!!!not vice versa***
+
+   ***not vice versa*** Becauase, calling const mem_fun means not modifying data member, this will risk modifying data member in non-detected way.
+
+   ```cpp
+        class TextBlockV1
+        {
+        public:
+            // const mem_fun
+            const char &operator[](int pos) const
+            {
+                // do bounds checking
+                // log access data
+                // verify data integrity
+                return text[pos];
+            }
+
+            // char &operator[](int pos)
+            // {
+            //     // do bounds checking
+            //     // log access data
+            //     // verify data integrity
+            //     return text[pos];
+            // }
+            char &operator[](int pos)
+            {
+                return const_cast<char &>( // cast away constness of return-type for const mem_fun
+                    static_cast<const TextBlockV1 &>(*this)[pos]
+                    // cast *this to const and call const mem_fun,
+                    // also avoiding end-less recursion if invoking on non-constant member
+                );
+            }
+
+        private:
+            std::string text;
+        };
+   ```
 
 ### Item 4. Make sure that objects are initialized before they're used
 

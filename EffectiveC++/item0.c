@@ -8,6 +8,7 @@ char *author = AUTHOR;
 extern char *date;
 int main()
 {
+    UINT num = 10;
     // printf("%s\n", date);
     return 0;
 }

@@ -10,6 +10,8 @@
 # 1 "item0_inc.h" 1
 # 9 "item0_inc.h"
 char *date = "14th May";
+
+typedef unsigned int UINT;
 # 4 "item0.c" 2
 
 
@@ -18,6 +20,7 @@ char *author = "Bella";
 extern char *date;
 int main()
 {
+    UINT num = 10;
 
     return 0;
 }

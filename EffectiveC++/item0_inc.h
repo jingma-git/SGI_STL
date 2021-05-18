@@ -8,5 +8,5 @@ char *date = DATE;
 #else
 char *date = "14th May";
 #endif
-
+typedef unsigned int UINT;
 #endif

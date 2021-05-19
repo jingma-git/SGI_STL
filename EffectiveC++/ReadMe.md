@@ -1,12 +1,188 @@
+https://stackoverflow.com/questions/6264249/how-does-the-compilation-linking-process-work
+https://wizardforcel.gitbooks.io/100-gcc-tips/content/
+
 ## chp1. Acustoming Yourself to C++
 
 ### Item 1: View C++ as a federation of languages
 
 ### Item 2: Prefere consts, enums, and inlines to #defines
 
+***Prefer compiler to the preprocessor***
+https://en.wikipedia.org/wiki/C_preprocessor
+
+1. Constant pointers (usually put in header files)
+
+   ```cpp
+   const char* const authorName = "Bella";
+   ```
+
+2. Class-specific constants
+
+   For simple constants, prefer const objects or enums to #defines
+
+   ```cpp
+   class GamePlayer{
+   private:
+       // enum hack:
+       // for compilers that do not accept in-class static const
+       // like #define, you can never take address of enum, because they are just symbols
+       // good compilers will never set storage for const integral types
+       // fundamental technique of template metaprogramming
+       // enum{NumTurns = 5};
+       static const int NumTurns = 5; // constant declaration, may need to define it in source file
+       int scores[NumTurns];
+       static const double MaxScores; // in-class intialization is allowed only for integral types and only for constants
+   };
+   const double GamePlayer::MaxScores = 100.0;
+   ```
+
+   For function-like macros, prefer inline functions to #defines
+
 ### Item 3: Use const whenever possible
 
+#### std::iterator behaves like raw pointer
+
+```cpp
+    char greeting[] = "hello";
+    char *p0 = greeting;             // non-constant pointer, non-constant data
+    const char *p1 = greeting;       // non-constant pointer, const data
+    char *const p2 = greeting;       // constant pointer, non-constant data
+    const char *const p3 = greeting; // constant pointer, constant data
+
+    // STL iterator acts like raw_pointer
+    int a[] = {0, 1, 2};
+    std::vector<int> vec(a, a + 3);
+    // the iterator/pointer itself cannot be changed
+    // but the content it points to can be modified
+    const std::vector<int>::iterator iter = vec.begin(); // T* const;
+    *iter = 10;
+    // ++iter; // error!!! iter is constant
+
+    // the iterator can be changed, but the content it points cannot be changed
+    std::vector<int>::const_iterator citer = vec.begin(); // const T*;
+    ++citer;
+    // *citer = 10; // error!!! *cIter is const
+```
+
+#### Make user-defined type behaves like built-in types
+
+```cpp
+class Rational{};
+const Rational operator*(const Rational &a, const Rational &b);
+
+Rational a(10), b(5), c(50);
+if (a *b = c) // error!!! not compile. prevent programmer from writing == (comparison) to = (assignment)
+```
+
+#### const Member Functions (on constant object)
+
+1. Bit constness vs Logical Constness
+
+   ***Bit(Compiler) Constness*** Constant member function isn't allowed to modify any of non-static data member.
+
+   ***Logical Constantness*** Avoid changing non-static data member in user-detected way.
+
+   ```cpp
+    class TextBlockV1
+    {
+    public:
+        // const mem_fun
+        const char &operator[](int pos) const
+        {
+            // do bounds checking
+            // log access data
+            // verify data integrity
+            return text[pos];
+        }
+
+        // char &operator[](int pos)
+        // {
+        //     // do bounds checking
+        //     // log access data
+        //     // verify data integrity
+        //     return text[pos];
+        // }
+        char &operator[](int pos)
+        {
+            return const_cast<char &>( // cast away constness of return-type for const mem_fun
+                static_cast<const TextBlockV1 &>(*this)[pos]
+                // cast *this to const and call const mem_fun,
+                // also avoiding end-less recursion if invoking on non-constant member
+            );
+        }
+
+    private:
+        std::string text;
+    };
+   ```
+
+2. Avoid code duplication by asking non-constant member function call const member function, ***!!!not vice versa***
+
+   ***not vice versa*** Becauase, calling const mem_fun means not modifying data member, this will risk modifying data member in non-detected way.
+
+   ```cpp
+        class TextBlockV1
+        {
+        public:
+            // const mem_fun
+            const char &operator[](int pos) const
+            {
+                // do bounds checking
+                // log access data
+                // verify data integrity
+                return text[pos];
+            }
+
+            // char &operator[](int pos)
+            // {
+            //     // do bounds checking
+            //     // log access data
+            //     // verify data integrity
+            //     return text[pos];
+            // }
+            char &operator[](int pos)
+            {
+                return const_cast<char &>( // cast away constness of return-type for const mem_fun
+                    static_cast<const TextBlockV1 &>(*this)[pos]
+                    // cast *this to const and call const mem_fun,
+                    // also avoiding end-less recursion if invoking on non-constant member
+                );
+            }
+
+        private:
+            std::string text;
+        };
+   ```
+
 ### Item 4. Make sure that objects are initialized before they're used
+
+1. Mannually initialize objects of built-in type, because C++ only sometimes initalize external/static variables.
+2. Use member initialize list instead of assignment inside constructor.
+
+   Make sure all constructors initialize everything in the object.
+   Base classes are initialized before derived classes.
+   Within a class, data members are initialized in the order which they are declared.
+   To avoid bugs, list members in initailization list in the same order they're declared in the class.
+
+3. Avoid intialization order problems across translation units by replacing non-static objects with lcoal static objects.
+
+```cpp
+class FileSystem{};
+FileSystem& tfs(){
+    static FileSystem fs;
+    return fs;
+}
+class Directory{
+    Directory(){
+        size_t disks = tfs().numDisks(); // this ensures fs is initialized before being used
+    }
+};
+Directory& dir(){
+    static Directory direc;
+    return direc;
+}
+
+```
 
 ## chp2. Constructors, Deconstructors, and Assignment Operators
 
@@ -89,7 +265,7 @@ private:
 };
 ```
 
-### Item 9. Never call virtual functions during construction or deconstruction ?
+### Item 9. Never call virtual functions during construction or deconstruction
 
 Don't call virtual functions during construction or deconstruction, because such calls will never go to a more derived class than that of the currrently executing constructor or deconstructor.
 
@@ -158,6 +334,21 @@ Investment* rawPtr = pInv.get();
 ```
 1. APIs often requires access to raw resources, so each RAII class should offer a way to get resources it manages.
 2. Access maybe via explicit conversion or implicit conversion. Explicit conversion is safer. Implicit conversion is more convenient.
+
+```cpp
+void changeFontSize(FontHandle f, int newSize);
+Font f;
+int newFontSize;
+...
+changeFontSize(f.get(), newFontSize); // explicit conversion
+
+class Font{
+public:
+    operator FontHandle()const{ // Implicit Conversion
+        return f;
+    }
+};
+```
 
 ### Item 16: Use the same form in corresponding uses of new and delete
 

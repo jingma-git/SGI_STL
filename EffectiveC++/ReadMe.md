@@ -372,11 +372,19 @@ processWidget(pw, priority());
 
 ### Item 19: Treat class design as type design
 
-### Item 20: Prefer pass-by-reference to const to pass-by-value ?
+### Item 20: Prefer pass-by-reference-to-const to pass-by-value
+
+1. Prefer pass-by-reference-to-constant over pass-by-value, it is typically more efficient and avoids slicing problem.
+2. For built-in types, STL iterators and STL function objects, pass-by-value is more appropriate.
 
 ### Item 21: Don't try to return a reference when you must return an object
 
 ### Item 22: Declare data members private
+
+1. Declare data members private. It gives clients syntactically uniform access to data, affords fine-grained access control,
+allows invariants to be enforced, and offers class authors implementation flexibility.
+
+2. ***protected*** is no more encapsulated than ***public***. Both will induces unknown amount client code to be changed if the data member is changed.
 
 ### Item 23: Prefer non-member non-friend functions to member functions ?
 

@@ -386,7 +386,24 @@ allows invariants to be enforced, and offers class authors implementation flexib
 
 2. ***protected*** is no more encapsulated than ***public***. Both will induces unknown amount client code to be changed if the data member is changed.
 
-### Item 23: Prefer non-member non-friend functions to member functions ?
+### Item 23: Prefer non-member non-friend functions to member functions
+
+Increase encapsulation, package flexibility and functional extensibility.
+
+```cpp
+// header "webbrowser.h"
+namespace WebBrowserStuff{
+    class WebBrowser{};
+}
+// header "webbrowserbookmarks.h"
+namespace WebBrowserStuff{
+// bookmark-related convenience functions
+};
+// header "webbrowsercookies.h"
+namespace WebBrowserStuff{
+// cookie-related convenience functions
+};
+```
 
 ### Item 24: Declare non-member functions when type conversions should apply to all parameters ?
 

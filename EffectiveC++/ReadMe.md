@@ -557,7 +557,48 @@ for(VWP::iterator it=wptrs.begin(); it!=wptrs.end(); ++it){
 
 ### Item 28: Avoid returning "handles" to object internals
 
+1. handles: references, pointers, iterators
+2. Make const member functions act as const
+3. Minimize creation of dangling handles
+
+```cpp
+// this code should be avoided
+class Rectangle{
+public:
+const Point& upperLeft() const(return pData->ulhc;)
+};
+const Rectangle boundingBox(const GuiObject& obj){}
+GuiObject* pgo;
+const Point* pUpperLeft = &(boundingBox(*pgo).upperLeft()); // pUpperLeft become dangling pointers after client leave the block
+```
+
 ### Item 29: Strive for exception-safe code
+
+1. Exception-safe functions leak no resources and allow no data structures to be corrupted, even when exceptions are thrown. Such functions offer the basic, strong or non-thrown guarantees.
+2. The strong guarantee(atomic operation, all or nothing) can often be implemented via ***copy-and-swap***, but the strong guarantee is not practical for all functions.
+3. A funciton can usually offer a guarantee no stronger than weak guarantee of the functions it calls.
+
+```cpp
+struct PMImpl{ // pretty memu implementation
+    std::shared_ptr<Image> bgImg;
+    int imgChanges;
+};
+
+class PrettyMenu{
+public:
+    void changeBg(std::istream& imgSrc){
+        using std::swap;
+        Lock ml(&mutex);
+        shared_ptr<PMImpl> pNew(*pImpl); // copy
+        pNew->bgImg.reset(new Image(imgSrc)); // reset state for copy
+        ++pNew->imageChanges;
+        swap(pImpl, pNew); // swap
+    }
+private:
+    Mutex mutex;
+    std::shared_ptr<PMImpl> pImpl;
+};
+```
 
 ### Item 30: Understand the ins and outs of inlining (!)
 

@@ -164,7 +164,7 @@ if (a *b = c) // error!!! not compile. prevent programmer from writing == (compa
    Within a class, data members are initialized in the order which they are declared.
    To avoid bugs, list members in initailization list in the same order they're declared in the class.
 
-3. Avoid intialization order problems across translation units by replacing non-static objects with lcoal static objects.
+3. Avoid intialization order problems across translation units by replacing non-static objects with local static objects.
 
 ```cpp
 class FileSystem{};
@@ -405,15 +405,155 @@ namespace WebBrowserStuff{
 };
 ```
 
-### Item 24: Declare non-member functions when type conversions should apply to all parameters ?
+### Item 24: Declare non-member functions when type conversions should apply to all parameters (Item 46)
+
+```cpp
+class Rational{
+public:
+    Rational(int numerator=0, int denominator=1):m_numerator(numerator), m_denominator(denominator){}
+    int numerator(){return m_numerator;}
+    int denominator(){return m_denominator;}
+private:
+    int m_numerator;
+    int m_denominator;
+}
+
+const Rational operator*(const Rational& lhs, const Rational& rhs){
+    return Rational(lhs.numerator()*rhs.numerator(), lhs.denominator()*rhs.denominator());
+}
+
+Rational oneFourth(1, 4);
+Rational result;
+result = oneFourth * 2; // Implicit conversion Rational(2, 1)
+result = 2 * oneFourth; // Implicit conversion Rational(2, 1)
+```
 
 ### Item 25: Consider support for a non-throwing swap
+
+```cpp
+#include <iostream>
+
+namespace WidgetStuff
+{
+    template <typename T>
+    class WidgetImpl
+    {
+    };
+
+    template <typename T>
+    class Widget
+    {
+    public:
+        void swap(Widget &other)
+        {
+            std::cout << "member swap is called" << std::endl;
+            using std::swap;
+            swap(pimpl, other.pimpl);
+        }
+
+    private:
+        WidgetImpl<T> *pimpl; // pimpl (Pointer to implmentation) Idiom
+    };
+
+    template <typename T>
+    inline void swap(Widget<T> &a, Widget<T> &b) // overload std::swap
+    {
+        std::cout << "overloaded swap is called" << std::endl;
+        a.swap(b);
+    }
+}
+
+int main()
+{
+    using namespace WidgetStuff;
+    Widget<int> a, b;
+    using std::swap; // when calling swap, employ a 'using' declaration for std::swap
+    swap(a, b);      // then calll swap without namespace qualificaiton
+    return 0;
+}
+```
 
 ## chp5. implementations
 
 ### Item 26: Postphone variable definitions as long as possible
 
-### Item 27:  Minimize casting (+)
+```cpp
+const int MINIMUM_PSWD_LEN = 10;
+
+void encrypt(std::string &pwd) {}
+
+std::string encrypt_password(const std::string &password)
+{
+    if (password.size() < MINIMUM_PSWD_LEN)
+    {
+        throw std::logic_error("Password is too short");
+    }
+    // try to postphone definiton until you have initialization arguments for it
+    std::string encrypted(password);
+    encrypt(encrypted);
+    return encrypted;
+}
+```
+
+Better encapsulation, might not efficient if construction and deconstruction is expensive.
+
+```cpp
+// cost: n construction + n deconstruction
+for(...i){
+    Widget w(i)
+}
+```
+
+Efficient if assignment is cheap but not encapsulated well.
+
+```cpp
+// cost: 1 construction + 1 deconstruction + n assignment
+Widget w;
+for(...i){
+   w = i;
+}
+```
+
+### Item 27:  Minimize casting
+
+#### old-style
+
+1. (T)expression
+2. T(expression)
+
+#### C++ style
+
+1. `const_cast<T>(expression)`: cast_away the constantness of objects.
+2. `dynamic_cast<T>(expression)`: determine whether an object is of a particular type in an hierarchy, has significant run-time cost.
+3. `reinterpret_cast<T>(expression)`: low-level cast that yields implementation dependent results, eg., casting a pointer to an int.
+4. `static_cast<T>(expression)`: non-const to const, int to double, void* to typed pointers, pointer-to-base to pointer-to-derived.
+
+```cpp
+class Window{
+    virtual void onResize(){}
+};
+
+class SpecialWindow: public Window{
+    virtual void onResize(){
+        Window::onResize();
+        //... some stuff of SepcialWindow
+    }
+};
+```
+
+***replace dynamic_cast with type-safe containers or moving virtual function up the hierarchy, never do cascading dynamic_casts***
+
+```cpp
+typedef vector<shared_ptr<Window>> VWP;
+VWP wptrs;
+for(VWP::iterator it=wptrs.begin(); it!=wptrs.end(); ++it){
+    if(SpecialWindow *psw=dynamic_cast<SpecialWindow>(it->get())){ // don't do this
+        psw->blink(); 
+    }
+}
+// declare type-safe containers: vector<shared_ptr<SpecialWindow>> wptrs;
+// declare virtual blink() both on class Window and class SpecialWindow
+```
 
 ### Item 28: Avoid returning "handles" to object internals
 

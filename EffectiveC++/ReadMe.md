@@ -547,7 +547,7 @@ class SpecialWindow: public Window{
 typedef vector<shared_ptr<Window>> VWP;
 VWP wptrs;
 for(VWP::iterator it=wptrs.begin(); it!=wptrs.end(); ++it){
-    if(SpecialWindow *psw=dynamic_cast<SpecialWindow>(it->get())){ // don't do this
+    if(SpecialWindow *psw=dynamic_cast<SpecialWindow>(it->get())){ // don't do this!!!
         psw->blink(); 
     }
 }
@@ -600,9 +600,54 @@ private:
 };
 ```
 
-### Item 30: Understand the ins and outs of inlining (!)
+### Item 30: Understand the ins and outs of inlining
+
+1. Limit most inlining to small, frequently called functions. This facilitates debugging and binary upgradability, minimize potential code bloat, and maximizes the chances of greater program speed.
+
+2. Don't declare function templates inline just because they appear in header files.
 
 ### Item 31: Minimize compilation dependencies between files
+
+1. Depend on declarations instead of definitions. Two appproaches: Handle Class (pointer to implmentation)  and Interafce Class (abstract class with virtual functions, pure virtual functions, no datamember).
+2. Library header files should exist in full and declaration-only forms. This applies regardless of whether templates are involved.
+
+```cpp
+class Date;
+Date today(); // not be called, so just need declaration not defintion
+
+class Person
+{
+public:
+    virtual ~Person(){};
+    virtual std::string name() const = 0;
+    virtual std::string birthDate() const = 0;
+};
+
+class RealPerson : public Person
+{
+public:
+    RealPerson(const std::string &name, const std::string &birthday)
+        : m_name(name), m_birthday(birthday)
+    {
+    }
+    virtual ~RealPerson() {}
+    virtual std::string name() const { return m_name; }
+    virtual std::string birthDate() const { return m_birthday; }
+
+private:
+    std::string m_name;
+    std::string m_birthday;
+};
+std::shared_ptr<Person> create(const std::string &name, const std::string &birthday)
+{
+    return std::shared_ptr<Person>(new RealPerson(name, birthday));
+}
+int main()
+{
+    std::shared_ptr<Person> pP = create("Bella", "April 22th");
+    return 0;
+}
+```
 
 ## chp6. Inheritance and Object-Oriented Design
 

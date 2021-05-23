@@ -653,7 +653,11 @@ int main()
 
 ### Item 32. Make sure public inheritance models "is-a"
 
-### Item 33. Avoid hiding inherited names ?
+### Item 33. Avoid hiding inherited names
+
+1. Names in derived classes hide names in base classes. Under public inheritance, this is never desirable since derived class is required to override all functions from base class.
+
+2. To make hidden names visible again, employ ***using*** declarations or ***forwarding functions***.
 
 ### Item 34. Differentiate between inheritance of interface and inheritance of implementation
 

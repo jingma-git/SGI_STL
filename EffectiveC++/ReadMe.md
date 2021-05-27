@@ -661,6 +661,14 @@ int main()
 
 ### Item 34. Differentiate between inheritance of interface and inheritance of implementation
 
+1. Inheritance of interface is different from inheritance of implementation. Under public inheritance, derived classes always inherit base class interface.
+
+2. Pure virtual functions specify inheritance of interface only.
+
+3. Simple (impure) virtual functions specify inheritance of interface plus inheritance of a default implementation.
+
+4. Non-virtual functions specify inheritance of interface plus inheritance of a mandatory implementation.
+
 ### Item 35. Consider alternatives to virtual functions
 
 ### Item 36. Never redefine an inherited non-virtual function (!)

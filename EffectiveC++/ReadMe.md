@@ -707,7 +707,32 @@ ptr->mf(); // call B::mf() instead of D::mf()
 
 ### Item 39. Use private inheritance judiciously
 
+1. Private inheritance means 'is-implemented-in-terms-of', it is usually inferior to composition, but it makes sense when a derived class needs access to protected base class members or needs to redefine inherited virtual functions.
+
+2. Private inheritance can enable EBO (empty base optimization). This can be important for library developers who strive to minimize object size. eg. std::unary_function, std::binary_function
+
+```cpp
+    template <class _Arg1, class _Arg2, class _Result>
+    struct binary_function
+    {
+        typedef _Arg1 first_argument_type;
+        typedef _Arg2 second_argument_type;
+        typedef _Result result_type;
+    };
+
+    template <class _Tp>
+    struct plus : public binary_function<_Tp, _Tp, _Tp>
+    {
+        _Tp operator()(const _Tp &__x, const _Tp &__y) const { return __x + __y; }
+    };
+```
+
 ### Item 40. Use multiple inheritance judiciously
+
+1. MI leads to ambiguity if two Base class contains same name
+2. MI lead the need for virtual inheritance
+3. Virtual inhertiance imposes cost in size, speed, complexity of initialization and assignment. It's most pratical when virtual base class has no data.
+4. MI does have legitimate use: public inhertance from an interface class and private inheritance from an implementation class
 
 ## chp7. Templates and Generic Programming
 

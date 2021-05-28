@@ -671,13 +671,39 @@ int main()
 
 ### Item 35. Consider alternatives to virtual functions
 
-### Item 36. Never redefine an inherited non-virtual function (!)
+1. Alternatives: NVI (non-virtual interface idom/template method), function pointer/std::function as data member, strategy pattern.
 
-? what the generated actualy looks like if I redefine a non-virtual member function
+2. Disadvantages moving class member function outside of class: the non-member function doesn't have access to private data member.
+
+3. ```std::function<ret_type(param_type...)>``` makes it possible to pass any compatible function pointer, class member function, functor object.
+
+### Item 36. Never redefine an inherited non-virtual function
+
+```cpp
+class B{
+public:
+    void mf(){}
+};
+
+class D: public B{
+public:
+    void mf(){}
+};
+
+D d;
+B* ptr = &d;
+ptr->mf(); // call B::mf() instead of D::mf()
+```
 
 ### Item 37. Never redefine a function's inherited default parameter value
 
+1. virtual function with a default parameter value: virtual functions are dynamically bound, but default parameter values are statically bound.
+
+2. use NVI (non-virtual-interface idom) to prevent
+
 ### Item 38. Model "has a" or "is implemented in terms of" through  composition
+
+1. In the application domain, composition means has-a. In the implementation domain, it means is-implemented-in-terms-of.
 
 ### Item 39. Use private inheritance judiciously
 

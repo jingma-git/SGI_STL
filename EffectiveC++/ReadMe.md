@@ -736,9 +736,19 @@ ptr->mf(); // call B::mf() instead of D::mf()
 
 ## chp7. Templates and Generic Programming
 
-### Item 41. Understand implicit interfaces and compile-time polymorphism ?
+### Item 41. Understand implicit interfaces and compile-time polymorphism
+
+1. Both classes and templates support interfaces and polymorphism.
+
+2. For classes, interfaces are explicit and centered on function signatures. Polymorphism occurs through virtual function during runtime.
+
+3. For templates parameters, interface are implicit and based on valid expressions. Polymorphism occurs during compilation time through template instantiation and function overloading resolution.
 
 ### Item 42. Understand the two meanings of typename
+
+1. When declaring template parameters, ```class``` and ```typename``` are interchangeable.
+
+2. Use ```typename``` to identify nested independent type names, except in base class lists or as a base class identifier in a member initilization list.
 
 ### Item 43. Know how to access names in templatized based classes ?
 

@@ -748,11 +748,23 @@ ptr->mf(); // call B::mf() instead of D::mf()
 
 1. When declaring template parameters, ```class``` and ```typename``` are interchangeable.
 
-2. Use ```typename``` to identify nested independent type names, except in base class lists or as a base class identifier in a member initilization list.
+2. Use ```typename``` to identify nested dependent type names, except in base class lists or as a base class identifier in a member initilization list.
 
-### Item 43. Know how to access names in templatized based classes ?
+3. When to use keyword ```typename``` and ```template```?
+
+https://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-template-and-typename-keywords
+
+### Item 43. Know how to access names in templatized based classes
+
+1. In derived class templates, refer to names in base class templates via a ```this->``` prefix, via ```using``` declarations, or via an explicit class qualification (least desirable).
 
 ### Item 44. Factor parameter-independent code out of templates.
+
+1. Template generate multiple classes and multiple functions, so any template code not dependent on a template parameter causes bloat.
+
+2. Bloat due to non-type template parameter can often be eliminated by replacing template parameter with function parameters or class data members.
+
+3. Bloat due to type parameters can be reduced by sharing implementations for instantiation types with identical binary representations.  eg. list<int*>, list<const int*>, list<SquareMatrix<long, 3>*> should use a single underlying implementation---the one works with ```void*``` also works for them.
 
 ### Item 45. Use member function templates to accept "all compatible types"
 

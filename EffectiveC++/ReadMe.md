@@ -3,9 +3,9 @@ https://wizardforcel.gitbooks.io/100-gcc-tips/content/
 
 ## chp1. Acustoming Yourself to C++
 
-### Item 1: View C++ as a federation of languages
+### Item1: View C++ as a federation of languages
 
-### Item 2: Prefere consts, enums, and inlines to #defines
+### Item2: Prefere consts, enums, and inlines to #defines
 
 ***Prefer compiler to the preprocessor***
 https://en.wikipedia.org/wiki/C_preprocessor
@@ -768,7 +768,12 @@ https://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-te
 
 ### Item 45. Use member function templates to accept "all compatible types"
 
-### Item 46. Define non-member functions inside templates when type conversions are desired ?
+1. Use member function template to generate functions that accept all ***compatible*** types.
+2. If you declare member templates for generalized copy construction or generalized assignment, you still need to declare the normal copy constructor and copy assignment operator, too.
+
+### Item 46. Define non-member functions inside templates when type conversions are desired (item 25)
+
+1. When writing a class template that offers functions related to the template that support implicit type conversions on all parameters, define those functions as friends inside the class template.
 
 ### Item 47. Use traits classes for information about types
 

@@ -771,13 +771,18 @@ https://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-te
 1. Use member function template to generate functions that accept all ***compatible*** types.
 2. If you declare member templates for generalized copy construction or generalized assignment, you still need to declare the normal copy constructor and copy assignment operator, too.
 
-### Item 46. Define non-member functions inside templates when type conversions are desired (item 25)
+### Item 46. Define non-member functions inside templates when type conversions are desired (item 24)
 
 1. When writing a class template that offers functions related to the template that support implicit type conversions on all parameters, define those functions as friends inside the class template.
 
 ### Item 47. Use traits classes for information about types
+1. Traits enable compile-time if-else on types.
 
 ### Item 48. Be aware of template metaprogramming
+
+1. Ensure dimensional unit correctness.
+2. Optimize matrix operations.
+3. Generate custom design pattern implementations. (Policy-based design)
 
 ## chp8. Customizing new and delete
 

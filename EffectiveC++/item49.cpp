@@ -53,13 +53,13 @@ class Widget : public NewHandlerSupport<Widget>
 
 void out_of_mem()
 {
-    std::cerr << "mem alloc fails" << endl;
+    std::cerr << "out_of_mem: mem alloc fails" << endl;
     std::abort();
 }
 
 int main()
 {
-    cout << out_of_mem << endl;
+    // cout << out_of_mem << endl;
     Widget::set_new_handler(out_of_mem);
     Widget *w = new Widget;
     return 0;

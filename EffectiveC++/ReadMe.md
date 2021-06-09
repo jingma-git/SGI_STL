@@ -788,6 +788,8 @@ https://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-te
 
 ### Item 49: Understand the behavior of the new-handler
 
+set_new_handler: set a function to be called when mem alloc fails
+
 ### Item 50: Understand when it makes sense to replace new and delete ?
 
 ### Item 51: Adhere to convention when writing new and delete

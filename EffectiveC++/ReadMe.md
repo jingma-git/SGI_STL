@@ -794,6 +794,59 @@ set_new_handler: set a function to be called when mem alloc fails
 
 ### Item 51: Adhere to convention when writing new and delete
 
+`operator new` should contain an infinite loop trying to allocate memory, should call the new-handler if it can't satisfy a memory request, and should handle requests for zero bytes. Class-specific versions should handle requests for larger blocks than requested.
+
+`operator delete` should do nothing if passed a pointer that is null. Class-specific versions should handle blocks that are larger than expected.
+
+```cpp
+void* operator new(std::size_t size)throw(std::bad_alloc){
+    using namespace std;
+    // C++ requires that `operator new` return a legitimate pointer even when zero bytes are requested. 
+    if(size==0){
+        size = 1;
+    }
+
+    while(true){
+        // attempt to allocate size bytes;
+        if(the allocation was successful)
+            return (a pointer to memory)
+        // allocation was unsuccessful; find out what the current
+        // new-handling function is
+        std::new_handler globalHandler = set_new_handler(0);
+        if(globalHandler)(*globalHandler)();
+        else throw std::bad_alloc();
+    }
+}
+```
+
+```cpp
+void operator delete(void* rawMem)throw(){
+    if(rawMemory==0)return;
+    // deallocate the memory pointed to by rawMem
+}
+```
+
+```cpp
+class Base{
+public:
+   static void* operator new(std::size_t size)throw(std::bad_alloc);
+   static void operator delete(void* rawMem, std::size_t size) throw();
+};
+class Derived: public Base{};
+void* Base::operator new(std::size_t size)throw(std::bad_alloc){
+    if(size!=sizeof(Base)) // if size is wrong, have standard operator new handle the request
+        return std::operator new(size);
+    // otherwise handle the request here
+}
+void Base::operator delete(void* rawMem, std::size_t size) throw(){
+    if(rawMem==0) return;
+    if(size!=sizeof(Base)){
+        std::operator delete(rawMem);
+        return;
+    }
+}
+```
+
 ### Item 52: Write placement delete if write placement new ?
 
 ## chp9. Miscellany

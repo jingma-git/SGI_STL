@@ -90,6 +90,7 @@ namespace mj
         typedef typename iterator::reference reference;
         typedef typename iterator::pointer pointer;
         typedef typename iterator::value_type value_type;
+        typedef std::size_t size_type;
 
     public:
         list() { empty_initialize(); }
@@ -133,7 +134,7 @@ namespace mj
         }
 
     public:
-        //iterators
+        // iterators
         iterator begin()
         {
             return node->next;
@@ -144,13 +145,23 @@ namespace mj
             return node;
         }
 
-        //capacity
-        bool empty()
+        iterator begin() const
+        {
+            return node->next;
+        }
+
+        iterator end() const
+        {
+            return node;
+        }
+
+        // capacity
+        bool empty() const
         {
             return node->next == node;
         }
 
-        size_t size()
+        size_t size() const
         {
             return mj::distance(begin(), end());
         }
@@ -159,7 +170,7 @@ namespace mj
 
         reference back() { return *(--end()); }
 
-        //modifiers
+        // modifiers
         iterator insert(iterator pos, const T &value)
         {
             // insert before pos

@@ -31,10 +31,10 @@ include_directories(./include/)
 # add_executable(main my_queue.cpp)
 # add_executable(main my_heap.cpp)
 # add_executable(main std_heap.cpp)
-# add_executable(main my_heap.cpp)
-add_executable(main my_priority_queue.cpp)
+add_executable(main my_heap.cpp)
+# add_executable(main my_priority_queue.cpp)
 # add_executable(main std_priority_queue.cpp)
 
 
 
-target_link_libraries(main -fsanitize=address)
+# target_link_libraries(main -fsanitize=address)

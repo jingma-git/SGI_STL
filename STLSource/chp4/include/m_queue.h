@@ -2,9 +2,6 @@
 
 #include "m_deque.h"
 
-#pragma once
-#include "m_deque.h"
-
 namespace mj
 {
     template <typename T, typename Sequence = deque<T>>

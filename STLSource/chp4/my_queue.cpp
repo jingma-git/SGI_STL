@@ -1,25 +1,36 @@
 #include <iostream>
 #include "m_queue.h"
+#include "m_list.h"
+#include <assert.h>
 
 using namespace std;
 
+template <class QueueT>
+void test(QueueT &q)
+{
+    q.push(1);
+    q.push(3);
+    q.push(5);
+    q.push(7);
+
+    assert(q.front() == 1);
+    q.pop();
+    assert(q.front() == 3);
+    q.pop();
+    assert(q.front() == 5);
+    q.pop();
+    assert(q.front() == 7);
+    assert(q.size() == 1);
+    q.pop();
+    assert(q.size() == 0);
+}
+
 int main()
 {
-    mj::queue<int> istack;
-    istack.push(1);
-    istack.push(3);
-    istack.push(5);
-    istack.push(7);
+    mj::queue<int> q;
+    test(q);
 
-    cout << istack.size() << endl;
-    cout << istack.front() << endl; //1
-
-    istack.pop();
-    cout << istack.front() << endl; //3
-    istack.pop();
-    cout << istack.front() << endl; //5
-    istack.pop();
-    cout << istack.front() << endl; //7
-    cout << istack.size() << endl;
+    mj::queue<int, mj::list<int>> listQ;
+    test(listQ);
     return 0;
 }

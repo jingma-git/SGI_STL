@@ -87,7 +87,9 @@ namespace mj
             __holeIndex = __secondChild;
             __secondChild = 2 * (__secondChild + 1);
         }
-        if (__secondChild == __len)
+
+        //--- original implementation in Houjie's book
+        if (__secondChild == __len) // after pop out, no right child
         {
             *(__first + __holeIndex) = *(__first + (__secondChild - 1));
             __holeIndex = __secondChild - 1;

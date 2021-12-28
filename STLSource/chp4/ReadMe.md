@@ -73,3 +73,5 @@ container adapter for deque/list, no iterator
 ## priority_queue
 complete binary tree<br>
 container adpater for vector..., use make_heap, push_heap, pop_heap as underlying algo to access the largest element in each iteration
+<img src=priority_q0.jpg>
+<img src=priority_q1.jpg>

@@ -756,7 +756,27 @@ https://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-te
 
 ### Item 43. Know how to access names in templatized based classes
 
-1. In derived class templates, refer to names in base class templates via a ```this->``` prefix, via ```using``` declarations, or via an explicit class qualification (least desirable).
+1. In derived class templates, refer to names in base class templates via a ```this->``` prefix, via ```using``` declarations, or via an explicit class qualification (`least desirable!!! because it does not support runtime polymorphism when the inherited function is virtual`).
+
+```cpp
+template <class Type>
+class Mesh
+{
+public:
+    int number;
+};
+
+template <class Type>
+class TetMesh : public Mesh<Type>
+{
+public:
+    using Mesh<Type>::number; // must have this line!!!, otherwise won't compile
+    TetMesh()
+    {
+        number;
+    }
+};
+```
 
 ### Item 44. Factor parameter-independent code out of templates.
 
